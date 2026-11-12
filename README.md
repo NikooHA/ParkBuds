@@ -54,3 +54,11 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Website
+
+The web version is deployed to GitHub Pages at **https://nikooha.github.io/ParkBuds/** by `.github/workflows/deploy-web.yml` on every push to `main`.
+
+- Build locally: `npm run build:web` (outputs to `dist/`)
+- QR code linking to the site: `assets/qr/parkbuds-website-qr.png` (print) / `.svg` (scalable)
+- One-time setup: in the GitHub repo go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
