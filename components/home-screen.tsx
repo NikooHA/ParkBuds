@@ -38,7 +38,7 @@ export function HomeScreen() {
   }
 
   if (wideWeb) {
-    return <HomeLaptop roster={roster} onCheckIn={onCheckIn} onOpenSession={onOpenSession} />;
+    return <HomeLaptop roster={visitors} onCheckIn={onCheckIn} onOpenSession={onOpenSession} />;
   }
 
   return (
