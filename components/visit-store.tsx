@@ -1,6 +1,11 @@
 import { createContext, use, useEffect, useState, type ReactNode } from 'react';
 
-const VISIT_LENGTH_MS = 60 * 60 * 1000;
+// How long a check-in lasts before it ends on its own.
+export const VISIT_MINUTES = 30;
+const VISIT_LENGTH_MS = VISIT_MINUTES * 60 * 1000;
+
+// Most people who can be checked in at the park at once.
+export const PARK_CAPACITY = 30;
 
 type VisitStore = {
   checkedIn: boolean;
@@ -8,6 +13,7 @@ type VisitStore = {
   personName: string;
   guestLabel: string;
   count: number;
+  full: boolean;
   checkIn: () => void;
   saveNames: (dogName: string, personName: string) => void;
   leave: () => void;
@@ -36,12 +42,16 @@ export function VisitProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(timeout);
   }, [checkedIn, checkedInAt]);
 
+  // Only this device's own visit is known; there is no shared list yet.
+  const count = checkedIn ? 1 : 0;
+
   const store: VisitStore = {
     checkedIn,
     dogName,
     personName,
     guestLabel: guestLabel(dogName, personName, checkedIn),
-    count: checkedIn ? 1 : 0,
+    count,
+    full: !checkedIn && count >= PARK_CAPACITY,
     checkIn() {
       setCheckedIn(true);
       setCheckedInAt((current) => current ?? Date.now());

@@ -2,7 +2,7 @@
 
 A small Expo app for seeing who is at the park and checking yourself in. The home screen lists visitors over a dog portrait. Check in with your dog’s name and your name, then tap your row later to leave.
 
-There is no server. Your visit lives in memory on the device and ends after 60 minutes, or when you tap **I’m leaving**.
+There is no server. Your visit lives in memory on the device and ends after 30 minutes, or when you tap **I’m leaving**. Up to 30 people can be checked in at once (`PARK_CAPACITY` in `components/visit-store.tsx`); because there is no server yet, each device only sees its own visit.
 
 ## Run it
 
@@ -26,7 +26,7 @@ This project uses Expo SDK 58 and Expo Router.
 - **Home** shows the portrait, a live count, and one row per visitor. With nobody there, the card says “No one is checked in.”
 - **Check in** opens a blank form. **Check in!** saves the names and returns home. Your row is the only one you can tap.
 - **I’m leaving** clears your names and checks you out. The next check-in starts empty again.
-- Sample people in `data/sample-visits.ts` are always listed so the park screen can be tried with a full crowd. They are not your saved visit.
+- When the park reaches 30 people, the button reads **Park is full (30)** and is disabled for anyone not already checked in.
 
 ## Project layout
 
@@ -35,11 +35,10 @@ app/                  screens (Expo Router)
   index.tsx           home
   visit.tsx           check-in
 components/           home, visit form, theme, visit state
-data/sample-visits.ts fake visitors for testing
 assets/               app icons and the dog portrait
 ```
 
-Colors live in `components/theme.ts`. Change the test crowd by editing `sampleVisits`.
+Colors live in `components/theme.ts`. Visit length (`VISIT_MINUTES`) and the park limit (`PARK_CAPACITY`) live in `components/visit-store.tsx`.
 
 ## Website
 

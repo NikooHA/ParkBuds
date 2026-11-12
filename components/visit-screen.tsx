@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from './theme';
 import { useLayout } from './use-layout';
 import { useSerifFonts } from './use-serif-fonts';
-import { useVisit } from './visit-store';
+import { useVisit, VISIT_MINUTES } from './visit-store';
 
 export function VisitScreen() {
   const { wideWeb, w, h } = useLayout();
@@ -196,7 +196,7 @@ function VisitForm() {
       </View>
 
       <Text style={{ marginTop: h(18), fontSize: w(15), lineHeight: w(21), color: colors.muted }}>
-        Check-ins end after 60 minutes.
+        Check-ins end after {VISIT_MINUTES} minutes.
       </Text>
     </View>
   );

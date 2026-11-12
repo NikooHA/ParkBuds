@@ -3,12 +3,11 @@ import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { sampleVisitLabel, sampleVisits } from '../data/sample-visits';
 import { PawIcon } from './paw-icon';
 import { colors } from './theme';
 import { useLayout } from './use-layout';
 import { useSerifFonts } from './use-serif-fonts';
-import { useVisit } from './visit-store';
+import { PARK_CAPACITY, useVisit } from './visit-store';
 
 export function HomeScreen() {
   const router = useRouter();
@@ -17,17 +16,8 @@ export function HomeScreen() {
   const imageHeight = Math.min(width * 0.78 * (4 / 3), maxImageHeight);
   const imageWidth = imageHeight * (3 / 4);
   const { serifSemi, serifBold } = useSerifFonts();
-  const { count, guestLabel } = useVisit();
-  const roster = [
-    ...sampleVisits.map((visit) => ({
-      id: visit.id,
-      label: sampleVisitLabel(visit),
-      isYou: false,
-      here: visit.here,
-    })),
-    ...(count > 0 ? [{ id: 'you', label: guestLabel, isYou: true, here: true }] : []),
-  ].sort((a, b) => Number(b.here) - Number(a.here));
-  const visitors = roster.filter((person) => person.here);
+  const { count, full, guestLabel } = useVisit();
+  const visitors = count > 0 ? [{ id: 'you', label: guestLabel, isYou: true }] : [];
 
   function onCheckIn() {
     router.push('/visit');
@@ -38,7 +28,7 @@ export function HomeScreen() {
   }
 
   if (wideWeb) {
-    return <HomeLaptop roster={visitors} onCheckIn={onCheckIn} onOpenSession={onOpenSession} />;
+    return <HomeLaptop roster={visitors} full={full} onCheckIn={onCheckIn} onOpenSession={onOpenSession} />;
   }
 
   return (
@@ -170,10 +160,12 @@ export function HomeScreen() {
 
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Check in"
+          accessibilityLabel={full ? 'Park is full' : 'Check in'}
+          accessibilityState={{ disabled: full }}
+          disabled={full}
           onPress={onCheckIn}
           style={({ pressed }) => ({
-            opacity: pressed ? 0.86 : 1,
+            opacity: full ? 0.5 : pressed ? 0.86 : 1,
             backgroundColor: colors.accent,
             borderRadius: w(16),
             borderCurve: 'continuous',
@@ -183,7 +175,9 @@ export function HomeScreen() {
             paddingHorizontal: w(20),
           })}
         >
-          <Text style={{ color: '#FFFFFF', fontSize: w(17), fontWeight: '700' }}>Check in</Text>
+          <Text style={{ color: '#FFFFFF', fontSize: w(17), fontWeight: '700' }}>
+            {full ? `Park is full (${PARK_CAPACITY})` : 'Check in'}
+          </Text>
         </Pressable>
       </ScrollView>
       </SafeAreaView>
@@ -193,10 +187,12 @@ export function HomeScreen() {
 
 function HomeLaptop({
   roster,
+  full,
   onCheckIn,
   onOpenSession,
 }: {
-  roster: { id: string; label: string; isYou: boolean; here: boolean }[];
+  roster: { id: string; label: string; isYou: boolean }[];
+  full: boolean;
   onCheckIn: () => void;
   onOpenSession: () => void;
 }) {
@@ -208,7 +204,7 @@ function HomeLaptop({
   const columns = 3;
   const gridGap = 10;
   const cellWidth = (cardWidth - 44 - gridGap * (columns - 1)) / columns;
-  const hereCount = roster.filter((person) => person.here).length;
+  const hereCount = roster.length;
 
   return (
     <ScrollView
@@ -322,18 +318,19 @@ function HomeLaptop({
               <ParkTile
                 key={person.id}
                 label={person.label}
-                here={person.here}
                 width={cellWidth}
-                onPress={person.isYou && person.here ? onOpenSession : undefined}
+                onPress={person.isYou ? onOpenSession : undefined}
               />
             ))}
           </ScrollView>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Check in"
+            accessibilityLabel={full ? 'Park is full' : 'Check in'}
+            accessibilityState={{ disabled: full }}
+            disabled={full}
             onPress={onCheckIn}
             style={({ pressed }) => ({
-              opacity: pressed ? 0.86 : 1,
+              opacity: full ? 0.5 : pressed ? 0.86 : 1,
               marginTop: 16,
               backgroundColor: colors.accent,
               borderRadius: 12,
@@ -345,7 +342,9 @@ function HomeLaptop({
               alignSelf: 'flex-start',
             })}
           >
-            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>Check in</Text>
+            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>
+              {full ? `Park is full (${PARK_CAPACITY})` : 'Check in'}
+            </Text>
           </Pressable>
         </View>
         </View>
@@ -356,12 +355,10 @@ function HomeLaptop({
 
 function ParkTile({
   label,
-  here,
   width,
   onPress,
 }: {
   label: string;
-  here: boolean;
   width: number;
   onPress?: () => void;
 }) {
@@ -370,16 +367,14 @@ function ParkTile({
       <Text numberOfLines={1} style={{ fontSize: 15, fontWeight: '600', color: colors.text }}>
         {label}
       </Text>
-      <Text style={{ marginTop: 4, fontSize: 13, fontWeight: '600', color: here ? colors.live : colors.muted }}>
-        {here ? 'Here' : 'Not here'}
-      </Text>
+      <Text style={{ marginTop: 4, fontSize: 13, fontWeight: '600', color: colors.live }}>Here</Text>
     </>
   );
   const tileStyle = {
     width,
     borderRadius: 14,
     borderCurve: 'continuous' as const,
-    backgroundColor: here ? '#FFFCF8' : colors.background,
+    backgroundColor: '#FFFCF8',
     paddingHorizontal: 12,
     paddingVertical: 10,
     boxShadow: '0 1px 2px rgba(58, 44, 38, 0.08)',
