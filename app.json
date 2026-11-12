@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "nikoo",
-    "slug": "nikoo",
+    "name": "ParkBuds",
+    "slug": "parkbuds",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "nikoo",
+    "scheme": "parkbuds",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -21,7 +21,8 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "ParkBuds"
     },
     "plugins": [
       "expo-router",
