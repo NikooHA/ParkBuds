@@ -30,8 +30,7 @@
       "expo-image"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "baseUrl": "/ParkBuds"
+      "typedRoutes": true
     }
   }
 }

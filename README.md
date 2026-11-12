@@ -53,16 +53,9 @@ Until this is done, the site shows “Shared check-ins are not set up yet.”
 
 ## Website
 
-The web version is deployed to GitHub Pages at **https://nikooha.github.io/ParkBuds/** by `.github/workflows/deploy-web.yml` on every push to `main`.
+The web version is deployed to GitHub Pages at **https://parkbuds.ca** by `.github/workflows/deploy-web.yml` on every push to `main`.
 
 - Build locally: `npm run build:web` (outputs to `dist/`)
 - QR code linking to the site: `assets/qr/parkbuds-website-qr.png` (print) / `.svg` (scalable)
-- GitHub setup: **Settings → Pages → Source: GitHub Actions** (leave Custom domain empty).
-
-### Moving to parkbuds.ca later
-
-1. Buy the domain, then add DNS records: `A` for `@` → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`; `CNAME` for `www` → `nikooha.github.io`.
-2. In `app.json`, remove `experiments.baseUrl`.
-3. In `.github/workflows/deploy-web.yml`, append `&& echo parkbuds.ca > dist/CNAME` to the copy step.
-4. In **Settings → Pages**, set Custom domain to `parkbuds.ca` and enable **Enforce HTTPS**.
-5. Regenerate the QR code for `https://parkbuds.ca`.
+- GitHub setup: **Settings → Pages → Source: GitHub Actions**, **Custom domain: `parkbuds.ca`**, **Enforce HTTPS** on.
+- DNS (at the domain registrar): `A` records for `@` → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`; `CNAME` for `www` → `nikooha.github.io`.
