@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "parkbuds",
+    "name": "ParkBuds",
     "slug": "parkbuds",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -20,7 +20,9 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "output": "single",
+      "name": "ParkBuds"
     },
     "plugins": [
       "expo-font",
@@ -28,7 +30,8 @@
       "expo-image"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "baseUrl": "/ParkBuds"
     }
   }
 }
