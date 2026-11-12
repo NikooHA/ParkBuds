@@ -16,8 +16,8 @@ export function HomeScreen() {
   const imageHeight = Math.min(width * 0.78 * (4 / 3), maxImageHeight);
   const imageWidth = imageHeight * (3 / 4);
   const { serifSemi, serifBold } = useSerifFonts();
-  const { count, full, guestLabel } = useVisit();
-  const visitors = count > 0 ? [{ id: 'you', label: guestLabel, isYou: true }] : [];
+  const { visitors, full, status, statusMessage } = useVisit();
+  const emptyText = emptyMessage(status, statusMessage);
 
   function onCheckIn() {
     router.push('/visit');
@@ -28,7 +28,7 @@ export function HomeScreen() {
   }
 
   if (wideWeb) {
-    return <HomeLaptop roster={visitors} full={full} onCheckIn={onCheckIn} onOpenSession={onOpenSession} />;
+    return <HomeLaptop roster={visitors} full={full} emptyText={emptyText} onCheckIn={onCheckIn} onOpenSession={onOpenSession} />;
   }
 
   return (
@@ -128,7 +128,7 @@ export function HomeScreen() {
                     }
               }
             >
-              {visitors.length === 0 ? 'No one is checked in' : `${visitors.length} checked in`}
+              {visitors.length === 0 ? emptyText : `${visitors.length} checked in`}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: w(6) }}>
               <View
@@ -188,11 +188,13 @@ export function HomeScreen() {
 function HomeLaptop({
   roster,
   full,
+  emptyText,
   onCheckIn,
   onOpenSession,
 }: {
   roster: { id: string; label: string; isYou: boolean }[];
   full: boolean;
+  emptyText: string;
   onCheckIn: () => void;
   onOpenSession: () => void;
 }) {
@@ -291,7 +293,7 @@ function HomeLaptop({
             </View>
           </View>
           {hereCount === 0 ? (
-            <Text style={{ marginTop: 18, fontSize: 20, fontWeight: '700', color: colors.text }}>No one is checked in</Text>
+            <Text style={{ marginTop: 18, fontSize: 20, fontWeight: '700', color: colors.text }}>{emptyText}</Text>
           ) : (
             <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}>
               <Text
@@ -351,6 +353,12 @@ function HomeLaptop({
       </View>
     </ScrollView>
   );
+}
+
+function emptyMessage(status: 'loading' | 'ready' | 'error', statusMessage: string) {
+  if (status === 'loading') return 'Checking the park…';
+  if (status === 'error') return statusMessage;
+  return 'No one is checked in';
 }
 
 function ParkTile({
