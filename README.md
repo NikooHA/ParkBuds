@@ -57,8 +57,9 @@ Join our community of developers creating universal apps.
 
 ## Website
 
-The web version is deployed to GitHub Pages at **https://nikooha.github.io/ParkBuds/** by `.github/workflows/deploy-web.yml` on every push to `main`.
+The web version is deployed to GitHub Pages at **https://parkbuds.ca** by `.github/workflows/deploy-web.yml` on every push to `main`.
 
 - Build locally: `npm run build:web` (outputs to `dist/`)
 - QR code linking to the site: `assets/qr/parkbuds-website-qr.png` (print) / `.svg` (scalable)
-- One-time setup: in the GitHub repo go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
+- GitHub setup: **Settings → Pages → Source: GitHub Actions**, and **Custom domain: `parkbuds.ca`** with **Enforce HTTPS** on.
+- DNS (at the domain registrar): `A` records for `@` → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`; `CNAME` for `www` → `nikooha.github.io`.

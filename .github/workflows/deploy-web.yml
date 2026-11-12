@@ -26,7 +26,7 @@ jobs:
       - run: npm ci
       - run: npx expo export --platform web
       # Lets deep links like /explore resolve and stops Jekyll from hiding the _expo folder
-      - run: cp dist/+not-found.html dist/404.html && touch dist/.nojekyll
+      - run: cp dist/+not-found.html dist/404.html && touch dist/.nojekyll && echo parkbuds.ca > dist/CNAME
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
