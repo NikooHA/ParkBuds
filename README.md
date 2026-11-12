@@ -54,3 +54,12 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Website
+
+The web version is deployed to GitHub Pages at **https://parkbuds.ca** by `.github/workflows/deploy-web.yml` on every push to `main`.
+
+- Build locally: `npm run build:web` (outputs to `dist/`)
+- QR code linking to the site: `assets/qr/parkbuds-website-qr.png` (print) / `.svg` (scalable)
+- GitHub setup: **Settings → Pages → Source: GitHub Actions**, and **Custom domain: `parkbuds.ca`** with **Enforce HTTPS** on.
+- DNS (at the domain registrar): `A` records for `@` → `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`; `CNAME` for `www` → `nikooha.github.io`.
