@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from './theme';
 import { useLayout } from './use-layout';
 import { useSerifFonts } from './use-serif-fonts';
-import { useVisit } from './visit-store';
+import { useVisit, VISIT_MINUTES } from './visit-store';
 
 export function VisitScreen() {
   const { wideWeb, w, h } = useLayout();
@@ -60,12 +60,15 @@ function VisitForm() {
   const { checkedIn, dogName, personName, saveNames, leave } = useVisit();
   const [dog, setDog] = useState('');
   const [person, setPerson] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
   const personRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   useFocusEffect(
     useCallback(() => {
       setDog(checkedIn ? dogName : '');
       setPerson(checkedIn ? personName : '');
+      setError('');
     }, [checkedIn, dogName, personName]),
   );
 
@@ -77,8 +80,16 @@ function VisitForm() {
     }
   }
 
-  function onCheckIn() {
-    saveNames(dog.trim(), person.trim());
+  async function onCheckIn() {
+    if (saving) return;
+    setSaving(true);
+    setError('');
+    const problem = await saveNames(dog.trim(), person.trim());
+    setSaving(false);
+    if (problem) {
+      setError(problem);
+      return;
+    }
     if (process.env.EXPO_OS === 'ios') {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
@@ -89,7 +100,7 @@ function VisitForm() {
     if (process.env.EXPO_OS === 'ios') {
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     }
-    leave();
+    void leave();
     goHome();
   }
 
@@ -158,7 +169,7 @@ function VisitForm() {
             maxLength={24}
             placeholder="Name"
             placeholderTextColor={colors.label}
-            onSubmitEditing={onCheckIn}
+            onSubmitEditing={() => void onCheckIn()}
             style={{
               backgroundColor: colors.card,
               borderRadius: w(14),
@@ -176,9 +187,11 @@ function VisitForm() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Check in"
-          onPress={onCheckIn}
+          accessibilityState={{ disabled: saving }}
+          disabled={saving}
+          onPress={() => void onCheckIn()}
           style={({ pressed }) => ({
-            opacity: pressed ? 0.86 : 1,
+            opacity: saving ? 0.6 : pressed ? 0.86 : 1,
             backgroundColor: colors.accent,
             borderRadius: w(12),
             borderCurve: 'continuous',
@@ -188,15 +201,23 @@ function VisitForm() {
             justifyContent: 'center',
           })}
         >
-          <Text style={{ color: '#FFFFFF', fontSize: w(16), fontWeight: '700' }}>Check in!</Text>
+          <Text style={{ color: '#FFFFFF', fontSize: w(16), fontWeight: '700' }}>
+            {saving ? 'Checking in…' : checkedIn ? 'Save' : 'Check in!'}
+          </Text>
         </Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="I'm leaving" onPress={onLeave} hitSlop={w(8)}>
           <Text style={{ color: colors.accent, fontSize: w(17), fontWeight: '700' }}>I’m leaving</Text>
         </Pressable>
       </View>
 
+      {error ? (
+        <Text accessibilityRole="alert" style={{ marginTop: h(14), fontSize: w(15), lineHeight: w(21), fontWeight: '600', color: colors.accent }}>
+          {error}
+        </Text>
+      ) : null}
+
       <Text style={{ marginTop: h(18), fontSize: w(15), lineHeight: w(21), color: colors.muted }}>
-        Check-ins end after 60 minutes.
+        Check-ins end after {VISIT_MINUTES} minutes.
       </Text>
     </View>
   );
